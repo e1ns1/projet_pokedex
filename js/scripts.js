@@ -1,8 +1,3 @@
-// For Task 1.1, I just continued with the program!
-// alert('Hello world!');
-// let favoriteFood = "Lasagna";
-// document.write(favoriteFood);
-
 let pokemonList = [
     {
         id: 1,

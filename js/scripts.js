@@ -1,34 +1,61 @@
-let pokemonList = [
-    {
-        id: 1,
-        name: "Bulbasaur",
-        type: ['grass', 'poison'],
-        height: 0.7,
-        weight: 6.9
-    },
-    {
-        id_: 2,
-        name: "Ivysaur",
-        type: ['grass', 'poison'],
-        height: 1,
-        weight: 13
-    },
-    {
-        id: 3,
-        name: 'Venusaur',
-        type: ['grass', 'poison'],
-        height: 2,
-        weight: 100
-    }
-];
+let pokemonRepository = (function () {
+    let pokemonList = [
+        {
+            id: 1,
+            name: "Bulbasaur",
+            type: ['grass', 'poison'],
+            height: 0.7,
+            weight: 6.9
+        },
+        {
+            id: 2,
+            name: "Ivysaur",
+            type: ['grass', 'poison'],
+            height: 1,
+            weight: 13
+        },
+        {
+            id: 3,
+            name: "Venusaur",
+            type: ['grass', 'poison'],
+            height: 2,
+            weight: 100
+        }
+    ];
 
-//Iterating through pokemonList and print the result
-for (let i = 0;
-    i < pokemonList.length; i++) {
-    if(pokemonList[i].height > 1.5) {
-        document.write(pokemonList[i].name + " is " + pokemonList[i].height + " meters tall and weighs " + pokemonList[i].weight + "kg! Wow, that is big!<br>")
+    function add(pokemon) {
+        pokemonList.push(pokemon);
     }
-    else{
-        document.write(pokemonList[i].name + " is " + pokemonList[i].height + " meters tall and weighs " + pokemonList[i].weight + "kg!<br>")}
-}
 
+    function getAll() {
+        return pokemonList;
+    }
+
+    return  {
+        add : add,
+        getAll : getAll
+    };
+})();
+
+//printing pokemonList in Console
+console.log(pokemonRepository.getAll())
+
+//adding a new pokemon to pokemonList
+pokemonRepository.add({
+    id: 151,
+    name: 'Mew',
+    type: ['psychic'],
+    height: 0.4,
+    weight: 4
+
+})
+
+//iterating trough pokemonList
+pokemonRepository.getAll().forEach(function(pokemon){
+    if(pokemon.height > 1.5) {
+        console.log(pokemon.name + ' is ' + pokemon.height + ' meters tall and weighs ' + pokemon.weight + 'kg! Wow, that is big!' )
+    }
+    else {
+        console.log(pokemon.name + ' is ' + pokemon.height + ' meters tall and weighs ' + pokemon.weight + 'kg!' )
+    }
+});

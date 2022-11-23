@@ -1,40 +1,15 @@
 let pokemonRepository = (function () {
-    let pokemonList = [
-        {
-            id: 1,
-            name: "Bulbasaur",
-            type: ['grass', 'poison'],
-            height: 0.7,
-            weight: 6.9
-        },
-        {
-            id: 2,
-            name: "Ivysaur",
-            type: ['grass', 'poison'],
-            height: 1,
-            weight: 13
-        },
-        {
-            id: 3,
-            name: "Venusaur",
-            type: ['grass', 'poison'],
-            height: 2,
-            weight: 100
-        }
-    ];
-
+    let pokemonList = [];
     let addPokemonEventListener = function (element, pokemon) {
         element.addEventListener("click", () => showDetails(pokemon));
     };
+    let apiUrl = 'https://pokeapi.co/api/v2/pokemon/?limit=150';
 
     function add(pokemon) {
         if (
             typeof pokemon === "object" &&
-            "id" in pokemon &&
-            "name" in pokemon &&
-            "type" in pokemon &&
-            "height" in pokemon &&
-            "weight" in pokemon
+            "name" in pokemon //&&
+            // "detailsUrl" in pokemon
         ) {
             pokemonList.push(pokemon);
         } else {
@@ -57,32 +32,52 @@ let pokemonRepository = (function () {
         addPokemonEventListener(button, pokemon)
     }
 
+    function loadList() {
+      return fetch(apiUrl).then(function(response) {
+        return response.json();
+      }).then(function (json) {
+        json.results.forEach(function (item) {
+          let pokemon = {
+            name: item.name,
+            detailsUrl: item.url
+          };
+          add(pokemon);
+        });
+      }).catch(function  (e) {
+        console.error(e);
+      })
+    }
+
+    function loadDetails(item) {
+      let url = item.detailsUrl;
+      return fetch(url).then(function (response) {
+        return response.json();
+      }).then(function (details) {
+        item.imageUrl = details.sprites.front_default;
+        item.height = details.height;
+        item.types = details.types;
+      }).catch(function (e) {
+        console.error(e);
+      });
+    }
+
     function showDetails(pokemon) {
-        console.log(pokemon.name)
+      loadDetails(pokemon).then(function () {
+          console.log(pokemon);
+      });
     }
 
     return  {
         add : add,
         getAll : getAll,
         addListItem : addListItem,
-        showDetails : showDetails,
+        loadList : loadList,
+        loadDetails : loadDetails
     };
 })();
 
-//printing pokemonList in Console
-console.log(pokemonRepository.getAll())
-
-//adding a new pokemon to pokemonList
-pokemonRepository.add({
-    id: 151,
-    name: 'Mew',
-    type: ['psychic'],
-    height: 0.4,
-    weight: 4
-
-})
-
-//iterating trough pokemonList
-pokemonRepository.getAll().forEach(function(pokemon){
-    pokemonRepository.addListItem(pokemon)
+pokemonRepository.loadList().then(function() {
+  pokemonRepository.getAll().forEach(function (pokemon) {
+    pokemonRepository.addListItem(pokemon);
+  });
 });
